@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vueadminjava.mapper.ZhibiaoMapper">
+
+<!--    通用查询结果-->
+    <resultMap id="BaseResultMap" type="com.example.vueadminjava.entity.Zhibiao">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="level" property="level" />
+        <result column="parent_id" property="parentId" />
+        <result column="full_path" property="fullPath" />
+        <result column="detail" property="detail" />
+        <collection property="childList" ofType="com.example.vueadminjava.entity.Zhibiao" select="com.example.vueadminjava.mapper.ZhibiaoMapper.selectZhibiaos" column="id"/>
+    </resultMap>
+
+    <!--    通用查询结果-->
+    <resultMap id="BaseResultMap2" type="com.example.vueadminjava.entity.Zhibiao">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="level" property="level" />
+        <result column="parent_id" property="parentId" />
+        <result column="full_path" property="fullPath" />
+        <result column="detail" property="detail" />
+        <collection property="childList" ofType="com.example.vueadminjava.entity.Zhibiao" select="com.example.vueadminjava.mapper.ZhibiaoMapper.queryDetailsOne2Four" column="id"/>
+    </resultMap>
+
+<!--    通用结果查询列-->
+    <sql id="Base_Column_List">
+        `id`,`name`,`level`,`parent_id`,`full_path`,`desc`
+    </sql>
+
+
+    <select id="selectZhibiaos" resultMap="BaseResultMap">
+        select * from zhibiao where parent_id = #{parentId}
+    </select>
+
+    <select id="queryDetails" resultType="com.example.vueadminjava.entity.Zhibiao">
+        select `name`,detail from zhibiao where detail like concat('%',#{detail},'%') and level = 5 ;
+    </select>
+
+
+    <select id="queryQuestions" resultType="com.example.vueadminjava.entity.Zhibiao">
+        select id,full_path,detail from zhibiao where level=5
+    </select>
+
+
+</mapper>

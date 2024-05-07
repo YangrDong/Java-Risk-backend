@@ -1,0 +1,26 @@
+server:
+  port: 8083
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+# DataSource Config
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/fenxian?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 2001
+  security:
+    user:
+      name: user
+      password: 111111
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+
+vueadmin:
+  jwt:
+    header: Authorization
+    expire: 604800 # 7天，秒单位
+    secret: ji8n3439n439n43ld9ne9343fdfer49h

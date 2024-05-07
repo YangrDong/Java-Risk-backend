@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vueadminjava.mapper.AccessMapper">
+    <delete id="deleteReportById">
+        delete from sys_report where id = #{reportId}
+    </delete>
+
+    <delete id="deleteReportDetailsById">
+        delete from cf_sys_ques where report_id = #{reportId}
+    </delete>
+
+
+    <select id="queryAllReport" resultType="com.example.vueadminjava.entity.Report">
+        select id,report_title,report_detail_ids as questionIds,create_time as createTime
+        from sys_report
+    </select>
+
+    <select id="queryReportById" resultType="com.example.vueadminjava.entity.Report">
+        select *
+        from sys_report
+        where id = #{reportId}
+    </select>
+
+    <select id="queryReportDetail" resultType="com.example.vueadminjava.entity.CfSysQuestion">
+        select distinct csq.detail_id as detailId,sq.question as question,csq.remark as remark,csq.image_path as imagePath
+        from cf_sys_ques csq left join sys_questions sq on csq.detail_id=sq.detail_id
+        where csq.report_id=#{reportId} and csq.answer=1
+    </select>
+
+
+    <resultMap id="getParentsId" type="HashMap">
+        <result property="key" column="detail_id" />
+        <result property="value" column="parents_id" />
+    </resultMap>
+    <select id="queryParentsId" resultMap="getParentsId">
+        select detail_id,parents_id
+        from sys_questions
+    </select>
+
+    <resultMap id="getParentsName" type="HashMap">
+        <result property="key" column="id" />
+        <result property="value" column="name" />
+    </resultMap>
+    <select id="queryParentsName" resultMap="getParentsName">
+        select id,name
+        from zhibiao
+    </select>
+
+    <select id="queryReportPage" resultType="com.example.vueadminjava.entity.Report">
+        select id,report_title,report_detail_ids as questionIds,create_time as createTime
+        from sys_report
+        <where>
+            <if test="repName != null">
+                and report_title = #{repName}
+            </if>
+            <if test="startDate != null and endDate!=null">
+                and create_time between #{startDate} and #{endDate}
+            </if>
+        </where>
+        order by create_time DESC
+        <if test="curPage!=null and pageSize!=null">
+            limit #{curPage},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getReportTotal" resultType="java.lang.Long">
+        select count(*) from sys_report
+        <where>
+            <if test="repName!=null">
+                and report_title = #{repName}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                and create_time between #{startDate} and #{endDate}
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="insertQuestions" parameterType="java.util.List" keyProperty="id">
+        insert into cf_sys_ques
+        (
+           detail_id,
+        )
+        values
+        <foreach collection="list" item="item" index= "index" separator =",">
+            (
+            #{item.detailId},
+            )
+        </foreach>
+    </insert>
+
+    <update id="insertImages">
+        update cf_sys_ques set image_path = #{imgUrls} where detail_id=#{detailId}
+    </update>
+
+    <insert id="insertAnswers" parameterType="java.util.List" keyProperty="id">
+        insert into cf_sys_ques
+        (
+            report_id,
+            detail_id,
+            answer,
+            remark,
+            image_path
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+             #{item.reportId},
+             #{item.detailId},
+             #{item.answer},
+             #{item.remark},
+             #{item.imagePath}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertReport" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_report (report_title,report_detail_ids,create_time) values (#{reportTitle},#{questionIds},#{createTime})
+    </insert>
+</mapper>

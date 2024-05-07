@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "vueadmin.jwt",
+      "type": "com.example.vueadminjava.util.JwtUtils",
+      "sourceType": "com.example.vueadminjava.util.JwtUtils"
+    }
+  ],
+  "properties": [
+    {
+      "name": "vueadmin.jwt.expire",
+      "type": "java.lang.Long",
+      "sourceType": "com.example.vueadminjava.util.JwtUtils"
+    },
+    {
+      "name": "vueadmin.jwt.header",
+      "type": "java.lang.String",
+      "sourceType": "com.example.vueadminjava.util.JwtUtils"
+    },
+    {
+      "name": "vueadmin.jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.example.vueadminjava.util.JwtUtils"
+    }
+  ],
+  "hints": []
+}
