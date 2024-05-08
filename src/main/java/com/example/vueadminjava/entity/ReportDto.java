@@ -27,5 +27,5 @@ public class ReportDto implements Serializable {
 
     private String remark;
 
-    private String imagePath;
+    private String[] imagePath;
 }

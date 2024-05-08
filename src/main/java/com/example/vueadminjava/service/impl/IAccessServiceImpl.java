@@ -1,5 +1,7 @@
 package com.example.vueadminjava.service.impl;
 
+import cn.afterturn.easypoi.entity.ImageEntity;
+import cn.afterturn.easypoi.word.WordExportUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.vueadminjava.common.lang.Const;
@@ -10,13 +12,17 @@ import com.example.vueadminjava.mapper.SessionMapper;
 import com.example.vueadminjava.service.IAccessService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -177,7 +183,8 @@ public class IAccessServiceImpl extends ServiceImpl<AccessMapper,Question> imple
             reportDto.setFifthOrderName(names.get(4));
             reportDto.setQuestion(cfSysQuestion.getQuestion());
             reportDto.setRemark(cfSysQuestion.getRemark());
-            reportDto.setImagePath(cfSysQuestion.getImagePath());
+            String[] imgs = cfSysQuestion.getImagePath().split(",");
+            reportDto.setImagePath(imgs);
             reportDto.setReportId(reportId);
             reportDtoList.add(reportDto);
         }
@@ -198,4 +205,50 @@ public class IAccessServiceImpl extends ServiceImpl<AccessMapper,Question> imple
 
     }
 
+    @Override
+    public void generateWord(Integer reportId,HttpServletResponse response) throws Exception {
+        //准备导出数据
+        Map<String, Object> mapList = new HashMap<>();
+        List<Map<String, Object>> listReports = new ArrayList<>();
+
+        List<ReportDto> ques = getSingleReportById(reportId);
+        Report report = accessMapper.queryReportById(reportId);
+
+        ques.forEach(reportDto -> {
+            Map<String,Object> map = new HashMap<>();
+            map.put("firstOrderName",reportDto.getFirstOrderName());
+            map.put("secondOrderName",reportDto.getSecondOrderName());
+            map.put("thirdOrderName",reportDto.getThirdOrderName());
+            map.put("fourthOrderName",reportDto.getFourthOrderName());
+            map.put("fifthOrderName",reportDto.getFifthOrderName());
+            map.put("question",reportDto.getQuestion());
+            map.put("remark",reportDto.getRemark());
+            if (reportDto.getImagePath().length>1){
+                map.put("imgs1",this.imgFormatting(reportDto.getImagePath()[0],100,100));
+                map.put("imgs2",this.imgFormatting(reportDto.getImagePath()[1],100,100));
+            }else {
+                map.put("imgs1","http://localhost:8083/img/ae208d9b-772b-4824-9bef-fc5db8f0dacc.jpg");
+            }
+
+            listReports.add(map);
+        });
+        mapList.put("ques",listReports);
+        mapList.put("reportTitle",report.getReportTitle());
+        mapList.put("createTime",report.getCreateTime());
+
+        XWPFDocument doc = WordExportUtil.exportWord07("./static/风险诊断报告.docx",mapList);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("application/octet-stream");
+//        response.setStatus(200);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("风险诊断报告.docx", StandardCharsets.UTF_8.name()));
+        doc.write(response.getOutputStream());
+    }
+
+    private ImageEntity imgFormatting(String imgPath, int width, int height) {
+        //设置图片
+        ImageEntity image = new ImageEntity(imgPath, width, height);
+        //表格外添加简单图片
+        image.setType(ImageEntity.URL);
+        return image;
+    }
 }

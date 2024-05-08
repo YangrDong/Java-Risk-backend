@@ -60,6 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/logout",
             "/captcha",
             "/favicon.ico",
+            "/img/**",
+            "/sys/word"
 //            "/sys/show",
 //            "/sys/search",
 //            "/sys/question"

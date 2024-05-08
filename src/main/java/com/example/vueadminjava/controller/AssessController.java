@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +135,16 @@ public class AssessController {
         result.setCode(200);
         result.setData(removeById);
         result.setMsg("删除成功");
+        return result;
+    }
+
+
+    @GetMapping("/word")
+    public Result<String> word(@RequestParam("reportId")Integer reportId,HttpServletResponse response) throws Exception {
+        accessService.generateWord(reportId,response);
+        Result<String> result = new Result<>();
+        result.setMsg("生成word成功");
+        result.setCode(200);
         return result;
     }
 

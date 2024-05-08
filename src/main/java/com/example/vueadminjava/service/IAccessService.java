@@ -9,6 +9,7 @@ import com.example.vueadminjava.entity.ReportDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface IAccessService extends IService<Question> {
@@ -24,4 +25,6 @@ public interface IAccessService extends IService<Question> {
     List<ReportDto> getSingleReportById(Integer reportId);
 
     boolean removeReport(Integer reportId);
+
+    void generateWord(Integer reportId,HttpServletResponse response) throws Exception;
 }

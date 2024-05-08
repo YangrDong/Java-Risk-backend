@@ -31,7 +31,7 @@ public class AuthController extends BaseController {
 
         // 将key和code写死，测试用
         key = "aaaaa";
-        code = "11111";
+//        code = "11111";
 
         // 生成验证码图片
 //        使用producer对象的createImage()方法生成验证码图片，传入验证码文本作为参数。
