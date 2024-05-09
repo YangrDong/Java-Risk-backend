@@ -227,7 +227,8 @@ public class IAccessServiceImpl extends ServiceImpl<AccessMapper,Question> imple
                 map.put("imgs1",this.imgFormatting(reportDto.getImagePath()[0],50,50));
                 map.put("imgs2",this.imgFormatting(reportDto.getImagePath()[1],50,50));
             }else if (reportDto.getImagePath().length==1){
-                map.put("imgs1",this.imgFormatting(Arrays.toString(reportDto.getImagePath()),50,50));
+                map.put("imgs1",this.imgFormatting(Arrays.toString(reportDto.getImagePath()).replace("[","").replace("]",""),50,50));
+                System.out.println(Arrays.toString(reportDto.getImagePath()).replace("[","").replace("]",""));
                 map.put("imgs2","无图片");
             }else {
                 map.put("imgs1","无图片");
