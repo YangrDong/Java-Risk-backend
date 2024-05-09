@@ -224,10 +224,15 @@ public class IAccessServiceImpl extends ServiceImpl<AccessMapper,Question> imple
             map.put("question",reportDto.getQuestion());
             map.put("remark",reportDto.getRemark());
             if (reportDto.getImagePath().length>1){
-                map.put("imgs1",this.imgFormatting(reportDto.getImagePath()[0],100,100));
-                map.put("imgs2",this.imgFormatting(reportDto.getImagePath()[1],100,100));
+                map.put("imgs1",this.imgFormatting(reportDto.getImagePath()[0],50,50));
+                map.put("imgs2",this.imgFormatting(reportDto.getImagePath()[1],50,50));
+            }else if (reportDto.getImagePath().length==1){
+                map.put("imgs1",this.imgFormatting(Arrays.toString(reportDto.getImagePath()),50,50));
+                map.put("imgs2","无图片");
             }else {
-                map.put("imgs1","http://localhost:8083/img/ae208d9b-772b-4824-9bef-fc5db8f0dacc.jpg");
+                map.put("imgs1","无图片");
+                map.put("imgs2","无图片");
+
             }
 
             listReports.add(map);
@@ -239,7 +244,6 @@ public class IAccessServiceImpl extends ServiceImpl<AccessMapper,Question> imple
         XWPFDocument doc = WordExportUtil.exportWord07("./static/风险诊断报告.docx",mapList);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType("application/octet-stream");
-//        response.setStatus(200);
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("风险诊断报告.docx", StandardCharsets.UTF_8.name()));
         doc.write(response.getOutputStream());
     }

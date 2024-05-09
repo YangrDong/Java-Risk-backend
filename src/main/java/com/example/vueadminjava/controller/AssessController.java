@@ -1,6 +1,7 @@
 package com.example.vueadminjava.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.example.vueadminjava.common.lang.RespPageBean;
 import com.example.vueadminjava.common.lang.Result;
 import com.example.vueadminjava.entity.Question;
@@ -9,6 +10,7 @@ import com.example.vueadminjava.entity.ReportDto;
 import com.example.vueadminjava.entity.ReportVo;
 import com.example.vueadminjava.service.IAccessService;
 import com.example.vueadminjava.service.IZhibiaoService;
+import com.example.vueadminjava.util.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -140,12 +142,18 @@ public class AssessController {
 
 
     @GetMapping("/word")
-    public Result<String> word(@RequestParam("reportId")Integer reportId,HttpServletResponse response) throws Exception {
-        accessService.generateWord(reportId,response);
-        Result<String> result = new Result<>();
-        result.setMsg("生成word成功");
-        result.setCode(200);
-        return result;
+    public void word(@RequestParam("reportId")Integer reportId,HttpServletResponse response) throws Exception {
+        try{
+            accessService.generateWord(reportId,response);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.reset();
+            Result<String> result = new Result<>();
+            result.setMsg("生成word成功");
+            result.setCode(200);
+            String json = JSON.toJSONString(result);
+            ServletUtils.renderString(response,json);
+        }
     }
 
 }
